@@ -13,7 +13,7 @@ def generate_map_tiles():
     for x in range(FIELD_SIZE):
         tiles.append([])
         for y in range(FIELD_SIZE):
-            tiles[x].append(Tile(x * TILE_LENGTH, y * TILE_LENGTH, BLACK, FLOOR))
+            tiles[x].append(Tile(x * TILE_LENGTH, y * TILE_LENGTH, FLOOR))
     return tiles
 
 def generate_buttons():
@@ -53,5 +53,23 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
+        elif event.type == MOUSEBUTTONDOWN:
+            if event.button == 1:
+                mouse_x, mouse_y = event.pos
+                for button in buttons:
+                    if (button.position.x <= mouse_x <= button.position.x2) and (
+                            button.position.y <= mouse_y <= button.position.y2):
+                        print('button is selected')
+                for row in map_tiles:
+                    for tile in row:
+                        if (tile.position.x <= mouse_x <= tile.position.x2) and (
+                                tile.position.y <= mouse_y <= tile.position.y2):
+                            if tile.typeTyle == FLOOR:
+                                tile.change_type(WALL)
+                                tile.draw(DISPLAY_SURFACE)
+                            else:
+                                tile.change_type(FLOOR)
+                                tile.draw(DISPLAY_SURFACE)
+
     pygame.display.update()
 
