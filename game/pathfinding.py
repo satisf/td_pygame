@@ -1,22 +1,21 @@
 from position import Position
-from tile import Tile
 from config import *
 
 
-def calculate_neighbours(tile, map):
+def calculate_neighbours(tile, map_tiles):
     neighbours = []
     if 0 <= tile.position.x - 1:
-        if map[tile.position.x - 1][tile.position.y].typeTyle != WALL:
-            neighbours.append(map[tile.position.x - 1][tile.position.y])
+        if map_tiles[tile.position.x - 1][tile.position.y].typeTyle != WALL:
+            neighbours.append(map_tiles[tile.position.x - 1][tile.position.y])
     if tile.position.x + 1 < FIELD_SIZE:
-        if map[tile.position.x + 1][tile.position.y].typeTyle != WALL:
-            neighbours.append(map[tile.position.x + 1][tile.position.y])
+        if map_tiles[tile.position.x + 1][tile.position.y].typeTyle != WALL:
+            neighbours.append(map_tiles[tile.position.x + 1][tile.position.y])
     if 0 <= tile.position.y - 1:
-        if map[tile.position.x][tile.position.y - 1].typeTyle != WALL:
-            neighbours.append(map[tile.position.x][tile.position.y - 1])
+        if map_tiles[tile.position.x][tile.position.y - 1].typeTyle != WALL:
+            neighbours.append(map_tiles[tile.position.x][tile.position.y - 1])
     if tile.position.y + 1 < FIELD_SIZE:
-        if map[tile.position.x][tile.position.y + 1].typeTyle != WALL:
-            neighbours.append(map[tile.position.x][tile.position.y + 1])
+        if map_tiles[tile.position.x][tile.position.y + 1].typeTyle != WALL:
+            neighbours.append(map_tiles[tile.position.x][tile.position.y + 1])
     return neighbours
 
 
@@ -33,12 +32,14 @@ def show_path(start, end):
         current.change_type(PATH)
         current = current.parent
 
+
 def sort_by_estimate(tile):
     return tile.estimated_distance_to_end
 
-def find_path(map, start):
-    calculate_estimated_distance_to_end(map)
-    end = map[FIELD_SIZE - 1][FIELD_SIZE - 1]
+
+def find_path(map_tiles, start):
+    calculate_estimated_distance_to_end(map_tiles)
+    end = map_tiles[FIELD_SIZE - 1][FIELD_SIZE - 1]
 
     open = {start}
     closed = set()
@@ -51,7 +52,7 @@ def find_path(map, start):
             return
         open.remove(current)
         closed.add(current)
-        neighbours = calculate_neighbours(current, map)
+        neighbours = calculate_neighbours(current, map_tiles)
         for neighbour in neighbours:
             if neighbour in closed or neighbour in open:
                 continue
