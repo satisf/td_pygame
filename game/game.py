@@ -4,21 +4,25 @@ from pygame.locals import *
 from config import *
 from tile import Tile
 from button import Button
-from square import Square
+from position import Position
 
 
 pygame.init()
 
 
 def calculate_neighbours(map):
-    start = Square(0, 0)
-    end = Square(FIELD_SIZE - 1, FIELD_SIZE - 1)
+    end = Position(FIELD_SIZE - 1, FIELD_SIZE - 1)
     for x in range(FIELD_SIZE):
         for y in range(FIELD_SIZE):
-            if x != end.x and y != end.y:
-                map[x][y].estimated_distance_to_end = end.x
-            else:
-                map[x][y].estimated_distance_to_end = 0
+            map[x][y].estimated_distance_to_end = (end.x - x) + (end.y - y)
+            if 0 <= x-1:
+                map[x][y].neighbours.append(map[x-1][y])
+            if x + 1 < FIELD_SIZE:
+                map[x][y].neighbours.append(map[x + 1][y])
+            if 0 <= y-1:
+                map[x][y].neighbours.append(map[x][y-1])
+            if y + 1 < FIELD_SIZE:
+                map[x][y].neighbours.append(map[x][y+1])
 
 
 def generate_map_tiles():
@@ -29,6 +33,7 @@ def generate_map_tiles():
             tiles[x].append(Tile(x * TILE_LENGTH, y * TILE_LENGTH, FLOOR))
     tiles[0][0].change_type(START)
     tiles[FIELD_SIZE - 1][FIELD_SIZE - 1].change_type(END)
+    calculate_neighbours(tiles)
     return tiles
 
 
