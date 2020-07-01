@@ -14,6 +14,8 @@ def generate_map_tiles():
         tiles.append([])
         for y in range(FIELD_SIZE):
             tiles[x].append(Tile(x * TILE_LENGTH, y * TILE_LENGTH, FLOOR))
+    tiles[0][0].change_type(START)
+    tiles[FIELD_SIZE - 1][FIELD_SIZE - 1].change_type(END)
     return tiles
 
 def generate_buttons():
