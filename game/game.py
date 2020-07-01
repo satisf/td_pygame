@@ -5,24 +5,10 @@ from config import *
 from tile import Tile
 from button import Button
 from position import Position
+from pathfinding import find_path
 
 
 pygame.init()
-
-
-def calculate_neighbours(map):
-    end = Position(FIELD_SIZE - 1, FIELD_SIZE - 1)
-    for x in range(FIELD_SIZE):
-        for y in range(FIELD_SIZE):
-            map[x][y].estimated_distance_to_end = (end.x - x) + (end.y - y)
-            if 0 <= x-1:
-                map[x][y].neighbours.append(map[x-1][y])
-            if x + 1 < FIELD_SIZE:
-                map[x][y].neighbours.append(map[x + 1][y])
-            if 0 <= y-1:
-                map[x][y].neighbours.append(map[x][y-1])
-            if y + 1 < FIELD_SIZE:
-                map[x][y].neighbours.append(map[x][y+1])
 
 
 def generate_map_tiles():
@@ -30,10 +16,9 @@ def generate_map_tiles():
     for x in range(FIELD_SIZE):
         tiles.append([])
         for y in range(FIELD_SIZE):
-            tiles[x].append(Tile(x * TILE_LENGTH, y * TILE_LENGTH, FLOOR))
+            tiles[x].append(Tile(Position(x, y), x * TILE_LENGTH, y * TILE_LENGTH, FLOOR))
     tiles[0][0].change_type(START)
     tiles[FIELD_SIZE - 1][FIELD_SIZE - 1].change_type(END)
-    calculate_neighbours(tiles)
     return tiles
 
 
@@ -77,14 +62,16 @@ while True:
             if event.button == 1:
                 mouse_x, mouse_y = event.pos
                 for button in buttons:
-                    if (button.position.x <= mouse_x <= button.position.x2) and (
-                            button.position.y <= mouse_y <= button.position.y2):
+                    if (button.square.x <= mouse_x <= button.square.x2) and (
+                            button.square.y <= mouse_y <= button.square.y2):
                         print('start pathfinding')
+                        find_path(map_tiles, map_tiles[0][0])
+                        draw_map(DISPLAY_SURFACE, map_tiles)
 
                 for row in map_tiles:
                     for tile in row:
-                        if (tile.position.x <= mouse_x <= tile.position.x2) and (
-                                tile.position.y <= mouse_y <= tile.position.y2):
+                        if (tile.square.x <= mouse_x <= tile.square.x2) and (
+                                tile.square.y <= mouse_y <= tile.square.y2):
                             if tile.typeTyle == FLOOR:
                                 tile.change_type(WALL)
                                 tile.draw(DISPLAY_SURFACE)

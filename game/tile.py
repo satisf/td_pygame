@@ -3,8 +3,9 @@ from square import Square
 from config import *
 
 class Tile:
-    def __init__(self, x, y, tiletype):
-        self.position = Square(x, y, TILE_LENGTH, TILE_LENGTH)
+    def __init__(self, position, x, y, tiletype):
+        self.position = position
+        self.square = Square(x, y, TILE_LENGTH, TILE_LENGTH)
         self.typeTyle = FLOOR
         self.colour = WHITE
         self.border = BORDER_SIZE
@@ -32,16 +33,20 @@ class Tile:
             self.typeTyle = END
             self.colour = RED
             self.border = 0
+        elif type == PATH:
+            self.typeTyle = PATH
+            self.colour = BLUE
+            self.border = 0
 
 
 
     def draw(self, surface):
         pygame.draw.rect(surface,
                          WHITE,
-                         (self.position.x, self.position.y, self.position.width, self.position.height),
+                         (self.square.x, self.square.y, self.square.width, self.square.height),
                          0)
         pygame.draw.rect(surface,
                          self.colour,
-                         (self.position.x, self.position.y, self.position.width, self.position.height),
+                         (self.square.x, self.square.y, self.square.width, self.square.height),
                          self.border)
 
