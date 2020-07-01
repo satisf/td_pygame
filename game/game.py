@@ -4,8 +4,21 @@ from pygame.locals import *
 from config import *
 from tile import Tile
 from button import Button
+from square import Square
+
 
 pygame.init()
+
+
+def calculate_neighbours(map):
+    start = Square(0, 0)
+    end = Square(FIELD_SIZE - 1, FIELD_SIZE - 1)
+    for x in range(FIELD_SIZE):
+        for y in range(FIELD_SIZE):
+            if x != end.x and y != end.y:
+                map[x][y].estimated_distance_to_end = end.x
+            else:
+                map[x][y].estimated_distance_to_end = 0
 
 
 def generate_map_tiles():
@@ -17,6 +30,7 @@ def generate_map_tiles():
     tiles[0][0].change_type(START)
     tiles[FIELD_SIZE - 1][FIELD_SIZE - 1].change_type(END)
     return tiles
+
 
 def generate_buttons():
     buttons = []
@@ -48,7 +62,6 @@ draw_map(DISPLAY_SURFACE, map_tiles)
 draw_buttons(DISPLAY_SURFACE, buttons)
 
 
-
 # main game loop
 while True:
     for event in pygame.event.get():
@@ -61,7 +74,8 @@ while True:
                 for button in buttons:
                     if (button.position.x <= mouse_x <= button.position.x2) and (
                             button.position.y <= mouse_y <= button.position.y2):
-                        print('button is selected')
+                        print('start pathfinding')
+
                 for row in map_tiles:
                     for tile in row:
                         if (tile.position.x <= mouse_x <= tile.position.x2) and (

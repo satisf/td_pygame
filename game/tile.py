@@ -1,11 +1,15 @@
 import pygame
-from position import Position
+from square import Square
 from config import *
 
 class Tile:
     def __init__(self, x, y, tiletype):
-        self.position = Position(x, y, TILE_LENGTH, TILE_LENGTH)
+        self.position = Square(x, y, TILE_LENGTH, TILE_LENGTH)
         self.typeTyle = FLOOR
+        self.colour = WHITE
+        self.border = BORDER_SIZE
+        self.neighbours = []
+        self.estimated_distance_to_end = FIELD_SIZE * FIELD_SIZE
         self.change_type(tiletype)
 
 

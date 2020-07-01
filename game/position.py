@@ -1,10 +1,4 @@
-from config import *
-
 class Position:
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y):
         self.x = x
-        self.x2 = x + width
         self.y = y
-        self.y2 = y + height
-        self.width = width
-        self.height = height
