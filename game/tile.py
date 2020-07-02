@@ -14,6 +14,11 @@ class Tile:
         self.change_type(tiletype)
 
     def change_type(self, type):
+        if self.typeTyle == START or self.typeTyle == END or self.typeTyle == TOWER:
+            return
+        self.set_type(type)
+
+    def set_type(self, type):
         if self.typeTyle == START or self.typeTyle == END:
             return
         if type == WALL:

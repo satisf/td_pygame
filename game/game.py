@@ -52,6 +52,8 @@ def draw_enemies(surface, enemies):
 def draw_text(surface, game_state, font):
     if game_state is BUILD_TOWER:
         font.render_to(surface, ((FIELD_SIZE + 1) * TILE_LENGTH, 0), 'place a tower and continue', BLACK)
+    elif game_state is BUILD_WALLS:
+        font.render_to(surface, ((FIELD_SIZE + 1) * TILE_LENGTH, 0), 'place some walls and continue', BLACK)
 
 
 
@@ -119,7 +121,7 @@ while True:
                                     tile.change_type(FLOOR)
                             elif game_state is BUILD_TOWER:
                                 if tower:
-                                    tower.change_type(FLOOR)
+                                    tower.set_type(FLOOR)
                                 tower = tile
                                 tile.change_type(TOWER)
     if game_state is RUNNING:
