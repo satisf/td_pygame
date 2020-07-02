@@ -5,16 +5,20 @@ from config import *
 def calculate_neighbours(tile, map_tiles):
     neighbours = []
     if 0 <= tile.position.x - 1:
-        if map_tiles[tile.position.x - 1][tile.position.y].typeTyle != WALL:
+        if (map_tiles[tile.position.x - 1][tile.position.y].typeTyle != WALL) and(
+                map_tiles[tile.position.x - 1][tile.position.y].typeTyle != TOWER):
             neighbours.append(map_tiles[tile.position.x - 1][tile.position.y])
     if tile.position.x + 1 < FIELD_SIZE:
-        if map_tiles[tile.position.x + 1][tile.position.y].typeTyle != WALL:
+        if (map_tiles[tile.position.x + 1][tile.position.y].typeTyle != WALL) and (
+                map_tiles[tile.position.x - 1][tile.position.y].typeTyle != TOWER):
             neighbours.append(map_tiles[tile.position.x + 1][tile.position.y])
     if 0 <= tile.position.y - 1:
-        if map_tiles[tile.position.x][tile.position.y - 1].typeTyle != WALL:
+        if (map_tiles[tile.position.x][tile.position.y - 1].typeTyle != WALL) and (
+                map_tiles[tile.position.x][tile.position.y - 1].typeTyle != TOWER):
             neighbours.append(map_tiles[tile.position.x][tile.position.y - 1])
     if tile.position.y + 1 < FIELD_SIZE:
-        if map_tiles[tile.position.x][tile.position.y + 1].typeTyle != WALL:
+        if (map_tiles[tile.position.x][tile.position.y + 1].typeTyle != WALL) and (
+                map_tiles[tile.position.x][tile.position.y + 1].typeTyle != TOWER):
             neighbours.append(map_tiles[tile.position.x][tile.position.y + 1])
     return neighbours
 
@@ -26,11 +30,15 @@ def calculate_estimated_distance_to_end(map):
             map[x][y].estimated_distance_to_end = (end.x - x) + (end.y - y)
 
 
-def show_path(start, end):
+def get_path(start, end):
+    path = []
     current = end
     while current != start:
-        current.change_type(PATH)
+        path.append(current)
         current = current.parent
+    path.append(start)
+    path.reverse()
+    return path
 
 
 def sort_by_estimate(tile):
@@ -47,9 +55,7 @@ def find_path(map_tiles, start):
     while len(open) > 0:
         current = min(open, key=sort_by_estimate)
         if current == end:
-            print('path found')
-            show_path(start, end)
-            return
+            return get_path(start, end)
         open.remove(current)
         closed.add(current)
         neighbours = calculate_neighbours(current, map_tiles)
@@ -59,3 +65,4 @@ def find_path(map_tiles, start):
             neighbour.estimated_distance_to_end += current.estimated_distance_to_end
             neighbour.parent = current
             open.add(neighbour)
+

@@ -13,7 +13,6 @@ class Tile:
         self.estimated_distance_to_end = FIELD_SIZE * FIELD_SIZE
         self.change_type(tiletype)
 
-
     def change_type(self, type):
         if self.typeTyle == START or self.typeTyle == END:
             return
@@ -25,6 +24,10 @@ class Tile:
             self.typeTyle = FLOOR
             self.colour = BLACK
             self.border = BORDER_SIZE
+        elif type == TOWER:
+            self.typeTyle = TOWER
+            self.colour = BLUE
+            self.border = 0
         elif type == START:
             self.typeTyle = START
             self.colour = GREEN
@@ -33,12 +36,6 @@ class Tile:
             self.typeTyle = END
             self.colour = RED
             self.border = 0
-        elif type == PATH:
-            self.typeTyle = PATH
-            self.colour = BLUE
-            self.border = 0
-
-
 
     def draw(self, surface):
         pygame.draw.rect(surface,
