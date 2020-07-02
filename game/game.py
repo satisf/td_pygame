@@ -1,6 +1,7 @@
 import sys
 import pygame
 import time
+import pygame.freetype
 from pygame.locals import *
 from config import *
 from tile import Tile
@@ -8,9 +9,6 @@ from button import Button
 from enemy import Enemy
 from position import Position
 from pathfinding import find_path
-
-
-pygame.init()
 
 
 def generate_map_tiles():
@@ -34,15 +32,6 @@ def generate_buttons():
     return buttons
 
 
-DISPLAY_SURFACE = pygame.display.set_mode((SURFACE_WIDTH, SURFACE_HEIGHT))
-
-
-map_tiles = generate_map_tiles()
-buttons = generate_buttons()
-enemies = []
-add_enemy(enemies)
-
-
 def draw_map(surface, tiles):
     surface.fill(WHITE)
     for x in range(len(tiles)):
@@ -58,6 +47,13 @@ def draw_buttons(surface, btns):
 def draw_enemies(surface, enemies):
     for enemy in enemies:
         enemy.draw(surface)
+
+
+def draw_text(surface, game_state, font):
+    if game_state is BUILD_TOWER:
+        font.render_to(surface, ((FIELD_SIZE + 1) * TILE_LENGTH, 0), 'place a tower and continue', BLACK)
+
+
 
 
 def find_direction(enemy, path):
@@ -78,13 +74,22 @@ def draw_everything():
     draw_map(DISPLAY_SURFACE, map_tiles)
     draw_buttons(DISPLAY_SURFACE, buttons)
     draw_enemies(DISPLAY_SURFACE, enemies)
+    draw_text(DISPLAY_SURFACE, game_state, FONT)
 
-
+pygame.init()
 pygame.display.set_caption('PyGame Tower Defence')
-draw_everything()
 
+DISPLAY_SURFACE = pygame.display.set_mode((SURFACE_WIDTH, SURFACE_HEIGHT))
+FONT = pygame.freetype.SysFont(None, 12)
+map_tiles = generate_map_tiles()
+buttons = generate_buttons()
+enemies = []
+add_enemy(enemies)
 game_state = BUILD_TOWER
 tower = ''
+
+draw_everything()
+
 
 # main game loop
 while True:
@@ -99,7 +104,10 @@ while True:
                     if (button.square.x <= mouse_x <= button.square.x2) and (
                             button.square.y <= mouse_y <= button.square.y2):
                         path = find_path(map_tiles, map_tiles[0][0])
-                        game_state = RUNNING
+                        if game_state is BUILD_TOWER:
+                            game_state = BUILD_WALLS
+                        elif game_state is BUILD_WALLS:
+                            game_state = RUNNING
                 for row in map_tiles:
                     for tile in row:
                         if (tile.square.x <= mouse_x <= tile.square.x2) and (

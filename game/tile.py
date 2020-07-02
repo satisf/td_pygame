@@ -39,10 +39,6 @@ class Tile:
 
     def draw(self, surface):
         pygame.draw.rect(surface,
-                         WHITE,
-                         (self.square.x, self.square.y, self.square.width, self.square.height),
-                         0)
-        pygame.draw.rect(surface,
                          self.colour,
                          (self.square.x, self.square.y, self.square.width, self.square.height),
                          self.border)

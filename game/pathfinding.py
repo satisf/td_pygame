@@ -10,7 +10,7 @@ def calculate_neighbours(tile, map_tiles):
             neighbours.append(map_tiles[tile.position.x - 1][tile.position.y])
     if tile.position.x + 1 < FIELD_SIZE:
         if (map_tiles[tile.position.x + 1][tile.position.y].typeTyle != WALL) and (
-                map_tiles[tile.position.x - 1][tile.position.y].typeTyle != TOWER):
+                map_tiles[tile.position.x + 1][tile.position.y].typeTyle != TOWER):
             neighbours.append(map_tiles[tile.position.x + 1][tile.position.y])
     if 0 <= tile.position.y - 1:
         if (map_tiles[tile.position.x][tile.position.y - 1].typeTyle != WALL) and (
