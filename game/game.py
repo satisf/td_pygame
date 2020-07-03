@@ -5,6 +5,7 @@ import pygame.freetype
 from pygame.locals import *
 from config import *
 from tile import Tile
+from tower import Tower
 from button import Button
 from enemy import Enemy
 from position import Position
@@ -52,10 +53,14 @@ def draw_enemies(surface, enemies):
 def draw_text(surface, game_state, font):
     if game_state is BUILD_TOWER:
         font.render_to(surface, ((FIELD_SIZE + 1) * TILE_LENGTH, 0), 'place a tower and continue', BLACK)
+        font.render_to(surface, ((FIELD_SIZE + 1.2) * TILE_LENGTH, 3.2 * TILE_LENGTH), 'continue', BLACK)
     elif game_state is BUILD_WALLS:
-        font.render_to(surface, ((FIELD_SIZE + 1) * TILE_LENGTH, 0), 'place some walls and continue', BLACK)
-
-
+        font.render_to(surface, ((FIELD_SIZE + 1) * TILE_LENGTH, 0), 'place some walls and start', BLACK)
+        font.render_to(surface, ((FIELD_SIZE + 1.2) * TILE_LENGTH, 3.2 * TILE_LENGTH), 'start', BLACK)
+    elif game_state is WIN:
+        font.render_to(surface, ((FIELD_SIZE + 1) * TILE_LENGTH, 0), 'You win \o/', BLACK)
+    elif game_state is LOST:
+        font.render_to(surface, ((FIELD_SIZE + 1) * TILE_LENGTH, 0), 'You lost :( ', BLACK)
 
 
 def find_direction(enemy, path):
@@ -74,21 +79,26 @@ def find_direction(enemy, path):
 
 def draw_everything():
     draw_map(DISPLAY_SURFACE, map_tiles)
-    draw_buttons(DISPLAY_SURFACE, buttons)
+    if game_state is BUILD_TOWER or game_state is BUILD_WALLS:
+        draw_buttons(DISPLAY_SURFACE, buttons)
     draw_enemies(DISPLAY_SURFACE, enemies)
     draw_text(DISPLAY_SURFACE, game_state, FONT)
+
 
 pygame.init()
 pygame.display.set_caption('PyGame Tower Defence')
 
+
 DISPLAY_SURFACE = pygame.display.set_mode((SURFACE_WIDTH, SURFACE_HEIGHT))
 FONT = pygame.freetype.SysFont(None, 12)
 map_tiles = generate_map_tiles()
+start = map_tiles[0][0]
+end = map_tiles[FIELD_SIZE - 1][FIELD_SIZE - 1]
+tower = Tower(start)
 buttons = generate_buttons()
 enemies = []
 add_enemy(enemies)
 game_state = BUILD_TOWER
-tower = ''
 
 draw_everything()
 
@@ -121,13 +131,22 @@ while True:
                                     tile.change_type(FLOOR)
                             elif game_state is BUILD_TOWER:
                                 if tower:
-                                    tower.set_type(FLOOR)
-                                tower = tile
+                                    tower.tile.set_type(FLOOR)
+                                tower.tile = tile
                                 tile.change_type(TOWER)
     if game_state is RUNNING:
-        time.sleep(0.5)
+        tower.shoot(enemies, DISPLAY_SURFACE)
+        pygame.display.update()
+        if len(enemies) == 0:
+            game_state = WIN
         for enemy in enemies:
+            if enemy.health == 0:
+                enemies.remove(enemy)
+                continue
             enemy.move(find_direction(enemy, path))
+            if enemy.has_reached_end(end):
+                game_state = LOST
+        time.sleep(0.5)
 
     draw_everything()
     pygame.display.update()
